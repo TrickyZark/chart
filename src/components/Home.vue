@@ -1,11 +1,7 @@
 <template>
   <div id="Home">
 
-    <div class="mapListTitle">地图列表</div>
-
-    <div v-for="(item,index) in MapList" :key="index" class="imgFrame">
-      <img :src="'/api/Img/getImgAbridge/'+item.relativepath" height="200px" width="240px" class="img" @click="jumpPage(item.relativepath)"></div>
-    <!-- <router-view/>-->
+    <div id="myChart" :style="{width: '800px', height: '300px'}"></div>
   </div>
 </template>
 
@@ -15,23 +11,30 @@ export default {
   name: 'Home',
   data () {
     return {
-      MapList: []
+      msg: 'Welcome to Your Vue.js App'
     }
   },
   mounted () {
-    this.$http.get('/api/PublicMap/getAll').then(function (res) {
-      this.MapList = res.data.data
-    }, function () {
-      console.log('请求失败处理')
-    })
+    this.drawLine()
   },
   methods: {
-    jumpPage (page) {
-      const hrefs =
-      this.$router.resolve({
-        path: '/ImgPage/' + page
+    drawLine () {
+      // 基于准备好的dom，初始化echarts实例
+      let myChart = this.$echarts.init(document.getElementById('myChart'))
+      // 绘制图表
+      myChart.setOption({
+        title: { text: '在Vue中使用echarts' },
+        tooltip: {},
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        },
+        yAxis: {},
+        series: [{
+          name: '销量',
+          type: 'bar',
+          data: [5, 20, 36, 10, 10, 20]
+        }]
       })
-      window.open(hrefs.href)
     }
   }
 }
