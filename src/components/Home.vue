@@ -38,36 +38,77 @@ export default {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart1'))
       // 绘制图表
-      myChart.setOption({
-        title: { text: '各类支出占比' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-        },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
-        }]
-      })
+      myChart.setOption(
+        {
+          title: {
+            text: '各类支出占比',
+            subtext: 'Fake Data',
+            left: 'center'
+          },
+          legend: {
+            top: 'bottom'
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              mark: { show: true },
+              dataView: { show: true, readOnly: false },
+              restore: { show: true },
+              saveAsImage: { show: true }
+            }
+          },
+          series: [
+            {
+              name: 'Nightingale Chart',
+              type: 'pie',
+              radius: [50, 150],
+              center: ['50%', '50%'],
+              roseType: 'area',
+              itemStyle: {
+                borderRadius: 8
+              },
+              data: [
+                { value: 40, name: 'rose 1' },
+                { value: 38, name: 'rose 2' },
+                { value: 32, name: 'rose 3' },
+                { value: 30, name: 'rose 4' },
+                { value: 28, name: 'rose 5' },
+                { value: 26, name: 'rose 6' },
+                { value: 22, name: 'rose 7' },
+                { value: 18, name: 'rose 8' }
+              ]
+            }
+          ]
+        }
+      )
     },
     drawLine2 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart2'))
       // 绘制图表
       myChart.setOption({
-        title: { text: '日人均消费额' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        title: {
+          text: '日人均支出',
+          subtext: 'Fake Data',
+          left: 'center'
         },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
-        }]
+        xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [120, 200, 150, 80, 70, 110, 130],
+            type: 'bar',
+            showBackground: true,
+            backgroundStyle: {
+              color: 'rgba(180, 180, 180, 0.2)'
+            }
+          }
+        ]
       })
     },
     drawLine3 () {
@@ -75,17 +116,25 @@ export default {
       let myChart = this.$echarts.init(document.getElementById('myChart3'))
       // 绘制图表
       myChart.setOption({
-        title: { text: '食堂流量分析' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        title: {
+          text: '食堂流量分析',
+          subtext: 'Fake Data',
+          left: 'center'
         },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
-        }]
+        xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            smooth: true
+          }
+        ]
       })
     },
     drawLine4 () {
@@ -93,17 +142,25 @@ export default {
       let myChart = this.$echarts.init(document.getElementById('myChart4'))
       // 绘制图表
       myChart.setOption({
-        title: { text: '澡堂流量分析' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        title: {
+          text: '澡堂流量分析',
+          subtext: 'Fake Data',
+          left: 'center'
         },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
-        }]
+        xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            smooth: true
+          }
+        ]
       })
     },
     drawLine5 () {
@@ -111,17 +168,39 @@ export default {
       let myChart = this.$echarts.init(document.getElementById('myChart5'))
       // 绘制图表
       myChart.setOption({
-        title: { text: '商铺流量分析' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        title: {
+          text: '商铺流量分析',
+          subtext: 'Fake Data',
+          left: 'center'
         },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
-        }]
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: '50%',
+            data: [
+              { value: 1048, name: 'Search Engine' },
+              { value: 735, name: 'Direct' },
+              { value: 580, name: 'Email' },
+              { value: 484, name: 'Union Ads' },
+              { value: 300, name: 'Video Ads' }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       })
     }
   }
