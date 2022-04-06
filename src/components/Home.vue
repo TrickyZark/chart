@@ -27,6 +27,31 @@ export default {
     }
   },
   mounted () {
+    this.$http.get('/api/hive2/list').then(function (res) {
+      this.MapList = res.data.data
+    }, function () {
+      console.log('请求失败处理')
+    })
+    this.$http.get('/api/hive2/list2').then(function (res) {
+      this.MapList = res.data.data
+    }, function () {
+      console.log('请求失败处理')
+    })
+    this.$http.get('/api/hive2/list3').then(function (res) {
+      this.MapList = res.data.data
+    }, function () {
+      console.log('请求失败处理')
+    })
+    this.$http.get('/api/hive2/list4').then(function (res) {
+      this.MapList = res.data.data
+    }, function () {
+      console.log('请求失败处理')
+    })
+    this.$http.get('/api/hive2/list5').then(function (res) {
+      this.MapList = res.data.data
+    }, function () {
+      console.log('请求失败处理')
+    })
     this.drawLine1()
     this.drawLine2()
     this.drawLine3()
