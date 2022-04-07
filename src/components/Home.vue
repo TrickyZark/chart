@@ -3,16 +3,20 @@
 
     <div class="title">
       一卡通数据分析
+      <div class="time">
+        数据更新时间:{{MapList.date}}
+      </div>
     </div>
 
     <div class="header">
     <div  class="box12" id="myChart1" ></div>
     <div  class="box12" id="myChart2" ></div>
+      <div  class="box12" id="myChart5" ></div>
     </div>
     <div class="footer">
     <div  class="box12" id="myChart3" ></div>
     <div  class="box12" id="myChart4"></div>
-    <div  class="box12" id="myChart5" ></div>
+
     </div>
   </div>
 </template>
@@ -50,13 +54,8 @@ export default {
     drawLine1 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart1'))
-      // eslint-disable-next-line no-unused-vars
-      let sumofAll = 0
-      this.MapList.consumePer.forEach(item => {
-        sumofAll += item.sum
-      })
       this.MapList.consumePer = this.MapList.consumePer.map(item => {
-        return {value: (item.sum / sumofAll).toFixed(2), name: item.consumetype}
+        return {value: item.sum / 100, name: item.consumetype}
       })
       // 绘制图表
       myChart.setOption({
@@ -65,7 +64,15 @@ export default {
           left: 'center'
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
         },
         legend: {
           top: 'bottom'
@@ -90,54 +97,125 @@ export default {
     drawLine2 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart2'))
+      let dayList = this.MapList.avgList.filter(line => line.sex === 1).map(line => {
+        return '03-0' + line.day
+      })
+      let manList = this.MapList.avgList.filter(line => line.sex === 0).map(line => {
+        return (line.avg / 100).toFixed(2)
+      })
+      let womanList = this.MapList.avgList.filter(line => line.sex === 1).map(line => {
+        return (line.avg / 100).toFixed(2)
+      })
       // 绘制图表
       myChart.setOption({
         title: {
-          text: '日人均支出',
-          subtext: 'Fake Data',
-          left: 'center'
+          text: '日均消费'
         },
-        xAxis: {
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        tooltip: {
+          trigger: 'axis'
         },
-        yAxis: {
-          type: 'value'
+        legend: {
+          data: ['男生', '女生']
         },
+        toolbox: {
+          show: true,
+          feature: {
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        calculable: true,
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: dayList
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
         series: [
           {
-            data: [120, 200, 150, 80, 70, 110, 130],
+            name: '男生',
             type: 'bar',
-            showBackground: true,
-            backgroundStyle: {
-              color: 'rgba(180, 180, 180, 0.2)'
-            }
+            data: manList
+          },
+          {
+            name: '女生',
+            type: 'bar',
+            data: womanList
+            /* markPoint: {
+              data: [
+                { name: 'Max', value: 182.2, xAxis: 7, yAxis: 183 },
+                { name: 'Min', value: 2.3, xAxis: 11, yAxis: 3 }
+              ]
+            },
+            markLine: {
+              data: [{ type: 'average', name: 'Avg' }]
+            } */
           }
         ]
       })
     },
+    fix (value) {
+      if (value < 10) { return '0' + value.toString() } else { return value.toString() }
+    },
     drawLine3 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart3'))
+      let dateList = []
+      for (var i = 6; i < 21; i++) {
+        for (var j = 0; j < 60; j++) {
+          dateList[(i - 6) * 60 + j] = this.fix(i) + ':' + this.fix(j)
+          //   console.log(dateList[(i - 7) * 60 + j])
+        }
+      }
+      let valuemap = {}
+      this.MapList.resFlow.forEach(line => {
+        valuemap[this.fix(line.hour) + ':' + this.fix(line.minute)] = line.count
+        // console.log(this.fix(line.hour) + ':' + this.fix(line.minute))
+      })
+      let valueList = dateList.map(line => {
+        if (valuemap[line] !== undefined) { return valuemap[line] } else { return 0 }
+      })
       // 绘制图表
       myChart.setOption({
-        title: {
-          text: '食堂流量分析',
-          subtext: 'Fake Data',
-          left: 'center'
+        visualMap:
+          {
+            show: false,
+            type: 'continuous',
+            seriesIndex: 0,
+            min: 0,
+            max: 400
+          },
+        title:
+          {
+            left: 'center',
+            text: '食堂流量分析'
+          },
+        tooltip: {
+          trigger: 'axis'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
         },
         xAxis: {
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: dateList
         },
-        yAxis: {
-          type: 'value'
-        },
+        yAxis: {},
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
             type: 'line',
-            smooth: true
+            showSymbol: false,
+            data: valueList
           }
         ]
       })
@@ -145,25 +223,55 @@ export default {
     drawLine4 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart4'))
+      let dateList = []
+      for (var i = 8; i < 22; i++) {
+        for (var j = 0; j < 60; j++) {
+          dateList[(i - 8) * 60 + j] = this.fix(i) + ':' + this.fix(j)
+          //   console.log(dateList[(i - 7) * 60 + j])
+        }
+      }
+      let valuemap = {}
+      this.MapList.bathFlow.forEach(line => {
+        valuemap[this.fix(line.hour) + ':' + this.fix(line.minute)] = line.count
+        // console.log(this.fix(line.hour) + ':' + this.fix(line.minute))
+      })
+      let valueList = dateList.map(line => {
+        if (valuemap[line] !== undefined) { return valuemap[line] } else { return 0 }
+      })
       // 绘制图表
       myChart.setOption({
-        title: {
-          text: '澡堂流量分析',
-          subtext: 'Fake Data',
-          left: 'center'
+        visualMap:
+          {
+            show: false,
+            type: 'continuous',
+            seriesIndex: 0,
+            min: 0,
+            max: 400
+          },
+        title:
+          {
+            left: 'center',
+            text: '澡堂流量分析'
+          },
+        tooltip: {
+          trigger: 'axis'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
         },
         xAxis: {
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: dateList
         },
-        yAxis: {
-          type: 'value'
-        },
+        yAxis: {},
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
             type: 'line',
-            smooth: true
+            showSymbol: false,
+            data: valueList
           }
         ]
       })
@@ -186,6 +294,13 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
         },
         legend: {
           type: 'scroll',
@@ -243,35 +358,39 @@ export default {
 }
 #myChart1{
   margin:10px;
-  width: 620px;
+  width: 300px;
   height: 350px;
  display: inline-block;
 }
 
 #myChart2{
   margin:10px;
-  width: 620px;
+  width: 600px;
   height: 350px;
   display: inline-block;
 }
 
 #myChart3{
   margin:10px;
-  width: 400px;
+  width: 730px;
   height: 350px;
   display: inline-block;
 }
 
 #myChart4{
   margin:10px;
-  width: 400px;
+  width: 730px;
   height: 350px;
   display: inline-block;
 }
 #myChart5{
   margin:10px;
-  width: 400px;
+  width: 500px;
   height: 350px;
   display: inline-block;
+}
+.time{
+  text-align: right;
+  font-size: 10px;
 }
 </style>
