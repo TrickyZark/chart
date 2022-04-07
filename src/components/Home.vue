@@ -23,89 +23,69 @@ export default {
   name: 'Home',
   data () {
     return {
+      MapList: {
+        'avgList': [],
+        'consumePer': [],
+        'resFlow': [],
+        'bathFlow': [],
+        'shopFlow': [],
+        'date': []
+      },
       msg: 'Welcome to Your Vue.js App'
     }
   },
   mounted () {
     this.$http.get('/api/hive2/list').then(function (res) {
-      this.MapList = res.data.data
+      this.MapList = res.data
+      this.drawLine1()
+      this.drawLine2()
+      this.drawLine3()
+      this.drawLine4()
+      this.drawLine5()
     }, function () {
       console.log('请求失败处理')
     })
-    this.$http.get('/api/hive2/list2').then(function (res) {
-      this.MapList = res.data.data
-    }, function () {
-      console.log('请求失败处理')
-    })
-    this.$http.get('/api/hive2/list3').then(function (res) {
-      this.MapList = res.data.data
-    }, function () {
-      console.log('请求失败处理')
-    })
-    this.$http.get('/api/hive2/list4').then(function (res) {
-      this.MapList = res.data.data
-    }, function () {
-      console.log('请求失败处理')
-    })
-    this.$http.get('/api/hive2/list5').then(function (res) {
-      this.MapList = res.data.data
-    }, function () {
-      console.log('请求失败处理')
-    })
-    this.drawLine1()
-    this.drawLine2()
-    this.drawLine3()
-    this.drawLine4()
-    this.drawLine5()
   },
   methods: {
     drawLine1 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart1'))
+      // eslint-disable-next-line no-unused-vars
+      let sumofAll = 0
+      this.MapList.consumePer.forEach(item => {
+        sumofAll += item.sum
+      })
+      this.MapList.consumePer = this.MapList.consumePer.map(item => {
+        return {value: (item.sum / sumofAll).toFixed(2), name: item.consumetype}
+      })
       // 绘制图表
-      myChart.setOption(
-        {
-          title: {
-            text: '各类支出占比',
-            subtext: 'Fake Data',
-            left: 'center'
-          },
-          legend: {
-            top: 'bottom'
-          },
-          toolbox: {
-            show: true,
-            feature: {
-              mark: { show: true },
-              dataView: { show: true, readOnly: false },
-              restore: { show: true },
-              saveAsImage: { show: true }
-            }
-          },
-          series: [
-            {
-              name: 'Nightingale Chart',
-              type: 'pie',
-              radius: [50, 150],
-              center: ['50%', '50%'],
-              roseType: 'area',
+      myChart.setOption({
+        title: {
+          text: '各类消费占比',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          top: 'bottom'
+        },
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: '50%',
+            data: this.MapList.consumePer,
+            emphasis: {
               itemStyle: {
-                borderRadius: 8
-              },
-              data: [
-                { value: 40, name: 'rose 1' },
-                { value: 38, name: 'rose 2' },
-                { value: 32, name: 'rose 3' },
-                { value: 30, name: 'rose 4' },
-                { value: 28, name: 'rose 5' },
-                { value: 26, name: 'rose 6' },
-                { value: 22, name: 'rose 7' },
-                { value: 18, name: 'rose 8' }
-              ]
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
             }
-          ]
-        }
-      )
+          }
+        ]
+      })
     },
     drawLine2 () {
       // 基于准备好的dom，初始化echarts实例
@@ -191,32 +171,37 @@ export default {
     drawLine5 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart5'))
+      let legendData = this.MapList.shopFlow.map(item => {
+        return item.company
+      })
+      let seriesData = this.MapList.shopFlow.map(item => {
+        return {value: item.count, name: item.company}
+      })
       // 绘制图表
       myChart.setOption({
         title: {
-          text: '商铺流量分析',
-          subtext: 'Fake Data',
+          text: '商铺消费统计',
           left: 'center'
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
+          type: 'scroll',
           orient: 'vertical',
-          left: 'left'
+          right: 0,
+          top: 30,
+          bottom: 20,
+          data: legendData
         },
         series: [
           {
-            name: 'Access From',
+            name: '姓名',
             type: 'pie',
-            radius: '50%',
-            data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' }
-            ],
+            radius: '35%',
+            center: ['40%', '50%'],
+            data: seriesData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
