@@ -67,10 +67,6 @@ export default {
             return [pt[0], '10%']
           }
         },
-        title: {
-          left: 'center',
-          text: 'Large Ara Chart'
-        },
         toolbox: {
           feature: {
             dataZoom: {
