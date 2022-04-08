@@ -1,5 +1,5 @@
 <template>
-  <div id="Home">
+  <div id="Home" >
     <div class="title">
       食堂流量分析
       <!--<div class="time">
@@ -35,42 +35,78 @@ export default {
     drawLine1 () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('myChart1'))
-      this.MapList.consumePer = this.MapList.consumePer.map(item => {
-        return {value: item.sum / 100, name: item.consumetype}
+      let dateList = []
+      for (var i = 5; i < 8; i++) {
+        for (var j = 1; j < 29; j++) {
+          for (var k = 0; k < 24; k++) {
+            dateList[(i - 5) * 28 * 24 + (j - 1) * 24 + k] = '2014-' + this.fix(i) + '-' + this.fix(j) + ' ' + this.fix(k) + ':00:00'
+            // console.log(dateList[(i - 5) * 28 * 24 + (j - 1) * 24 + k])
+          }
+        }
+      }
+      let valuemap = {}
+      this.MapList.resFlow.filter(x => x.hour !== undefined).forEach(line => {
+        valuemap[line.year + '-' + this.fix(line.month) + '-' + this.fix(line.day) + ' ' + this.fix(line.hour) + ':00:00'] = line.count
+        // console.log(valuemap[new Date(line.year + '-' + this.fix(line.month) + '-' + this.fix(line.day) + ' ' + this.fix(line.hour) + ':00:00').valueOf()])
+      })
+      let data = dateList.map(line => {
+        if (valuemap[line] !== undefined) {
+          // console.log(line + '---' + valuemap[line])
+          return [line, valuemap[line]]
+        } else {
+          // console.log(line + '---' + 0)
+          return [line, 0]
+        }
+        // eslint-disable-next-line no-unreachable
       })
       // 绘制图表
       myChart.setOption({
-        title: {
-          text: '各类消费占比',
-          left: 'center'
-        },
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            restore: { show: true },
-            saveAsImage: { show: true }
+          trigger: 'axis',
+          position: function (pt) {
+            return [pt[0], '10%']
           }
         },
-        legend: {
-          top: 'bottom'
+        title: {
+          left: 'center',
+          text: 'Large Ara Chart'
         },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: 'time',
+          boundaryGap: false
+        },
+        yAxis: {
+          type: 'value',
+          boundaryGap: [0, '0%']
+        },
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 0,
+            end: 20
+          },
+          {
+            start: 0,
+            end: 20
+          }
+        ],
         series: [
           {
-            name: 'Access From',
-            type: 'pie',
-            radius: '50%',
-            data: this.MapList.consumePer,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
+            name: 'Fake Data',
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            areaStyle: {},
+            data: data
           }
         ]
       })
@@ -91,12 +127,6 @@ export default {
   box-shadow:10px 10px 5px #888888;
   padding: 10px;
 }
-.header{
-   text-align: center;
-}
-.footer{
-  text-align: center;
-}
 
 .title{
   border-radius: 5px;
@@ -107,40 +137,9 @@ export default {
   margin: 20px 100px 10px;
 }
 #myChart1{
-  margin:10px;
-  width: 300px;
-  height: 350px;
- display: inline-block;
+  margin:0px auto;
+  width: 1600px;
+  height: 800px;
 }
 
-#myChart2{
-  margin:10px;
-  width: 600px;
-  height: 350px;
-  display: inline-block;
-}
-
-#myChart3{
-  margin:10px;
-  width: 730px;
-  height: 350px;
-  display: inline-block;
-}
-
-#myChart4{
-  margin:10px;
-  width: 730px;
-  height: 350px;
-  display: inline-block;
-}
-#myChart5{
-  margin:10px;
-  width: 500px;
-  height: 350px;
-  display: inline-block;
-}
-.time{
-  text-align: right;
-  font-size: 10px;
-}
 </style>
